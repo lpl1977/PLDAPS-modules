@@ -2,11 +2,7 @@ function settings = analogStickControl(p,state)
 %analogStickControl state dependent steps for initializing and acquiring
 %analog stick data
 %
-%  modules.analogStickControl(p,state)
-%
-%  or
-%
-%  settings = modules.analogStickControl
+%  settings = analogStickControl
 %
 %  This is a PLDAPS module for the openreception branch.  This module
 %  controls various actions related to the analog stick that are done in
@@ -36,7 +32,7 @@ if(nargin==0)
     stateFunction.order = Inf;
     stateFunction.acceptsLocationInput = false;
     filename = mfilename;
-    stateFunction.name = strcat('modules.',filename);
+    stateFunction.name = filename;
     requestedStates = {'experimentPostOpenScreen' 'trialSetup' 'frameUpdate'};    
     moduleName = strcat('module',strcat(upper(filename(1)),filename(2:end)));    
     settings.(moduleName).stateFunction = stateFunction;

@@ -2,14 +2,10 @@ function settings = callDefaultTrialFunction(p,state)
 %callDefaultTrialFunction call default trial function at a specified
 %priority
 %
-%  modules.callDefaultTrialFunction(p,state)
+%  settings = callDefaultTrialFunction
 %
-%  or
-%
-%  settings = modules.callDefaultTrialFunction
-%
-%  This is a PLDAPS module for the openreception branch.  This branch calls
-%  the default trial function at a specified priority.
+%  This is a PLDAPS module for the openreception branch.  This module calls
+%  the default trial function.
 %
 %  Returns the configuration settings for the module if called without an
 %  argument; you can use this as an argument to createRigPrefs.
@@ -24,7 +20,7 @@ if(nargin==0)
     stateFunction.order = -Inf;
     stateFunction.acceptsLocationInput = false;
     filename = mfilename;
-    stateFunction.name = strcat('modules.',filename);
+    stateFunction.name = filename;
     requestedStates.all = true;
     moduleName = strcat('module',strcat(upper(filename(1)),filename(2:end)));
     settings.(moduleName).stateFunction = stateFunction;

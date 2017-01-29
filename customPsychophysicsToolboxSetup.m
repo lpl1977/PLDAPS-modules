@@ -1,11 +1,7 @@
 function settings = customPsychophysicsToolboxSetup(p,state)
 %customPsychophysicsToolboxSetup custom PTB settings for running PLDAPS
 %
-%  modules.customPsychophysicsToolboxSetup(p,state)
-%
-%  or
-%
-%  settings = modules.customPsychophysicsToolboxSetup
+%  settings = customPsychophysicsToolboxSetup
 %
 %  This is a PLDAPS module for the openreception branch.  Prior to
 %  openScreen I need to set the head to the Datapixx screen so that the
@@ -22,14 +18,13 @@ if(nargin==0)
     %  Generate the settings structure
     stateFunction.order = -Inf;
     stateFunction.acceptsLocationInput = false;
-    stateFunction.name = strcat('modules.',mfilename);
-    requestedStates = 'experimentPreOpenScreen';
-    
-    module_name = strcat('module_',mfilename);
-    
-    settings.(module_name).stateFunction = stateFunction;
-    settings.(module_name).use = true;
-    settings.(module_name).requestedStates = requestedStates;
+    filename = mfilename;
+    stateFunction.name = mfilename;
+    requestedStates = 'experimentPreOpenScreen';    
+    moduleName = strcat('module',strcat(upper(filename(1)),filename(2:end)));
+    settings.(moduleName).stateFunction = stateFunction;
+    settings.(moduleName).use = true;
+    settings.(moduleName).requestedStates = requestedStates;
 else
     %  Execute the state dependent components
     

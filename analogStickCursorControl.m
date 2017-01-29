@@ -3,11 +3,7 @@ function settings = analogStickCursorControl(p,state)
 %displaying analog stick cursor.  Requires concurrent use of analogStick
 %object.
 %
-%  modules.analogStickCursorControl(p,state)
-%
-%  or
-%
-%  settings = modules.analogStickCursorControl
+%  settings = analogStickCursorControl
 %
 %  This is a PLDAPS module for the openreception branch.  The module
 %  controls various actions related to display of the analog stick cursor
@@ -36,11 +32,9 @@ if(nargin==0)
     stateFunction.order = Inf;
     stateFunction.acceptsLocationInput = false;
     filename = mfilename;
-    stateFunction.name = strcat('modules.',filename);
-    requestedStates = {'experimentPostOpenScreen'};
-    
-    moduleName = strcat('module',strcat(upper(filename(1)),filename(2:end)));
-    
+    stateFunction.name = filename;
+    requestedStates = {'experimentPostOpenScreen'};    
+    moduleName = strcat('module',strcat(upper(filename(1)),filename(2:end)));    
     settings.(moduleName).stateFunction = stateFunction;
     settings.(moduleName).use = true;
     settings.(moduleName).requestedStates = requestedStates;
