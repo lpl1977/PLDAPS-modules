@@ -47,10 +47,10 @@ else
     %  Execute the state dependent components    
     switch state
         case p.trial.pldaps.trialStates.experimentPostOpenScreen
-            
+
             %  Generate the analog stick object
             inputArgs = [fieldnames(p.trial.analogStick) struct2cell(p.trial.analogStick)]';
-            p.functionHandles.analogStickObj = analogStick(p,inputArgs);            
+            p.functionHandles.analogStickObj = analogStick(p,inputArgs{:});            
             fprintf('****************************************************************\n');            
             fprintf('Initialized analog stick:\n\n');
             disp(p.functionHandles.analogStickObj);
