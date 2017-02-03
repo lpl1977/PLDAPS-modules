@@ -38,6 +38,10 @@ if(nargin==0)
     settings.(moduleName).stateFunction = stateFunction;
     settings.(moduleName).use = true;
     settings.(moduleName).requestedStates = requestedStates;
+    
+    %  Settings structure for analogStick
+    temp = properties('analogStick');
+    settings.analogStick = cell2struct(cell(size(temp)),temp,1);
 else
     
     %  Execute the state dependent components    
@@ -45,7 +49,8 @@ else
         case p.trial.pldaps.trialStates.experimentPostOpenScreen
             
             %  Generate the analog stick object
-            p.functionHandles.analogStickObj = analogStick(p);            
+            inputArgs = [fieldnames(p.trial.analogStick) struct2cell(p.trial.analogStick)]';
+            p.functionHandles.analogStickObj = analogStick(p,inputArgs);            
             fprintf('****************************************************************\n');            
             fprintf('Initialized analog stick:\n\n');
             disp(p.functionHandles.analogStickObj);
