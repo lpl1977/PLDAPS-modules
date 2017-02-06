@@ -37,6 +37,7 @@ if(nargin==0)
     settings.a2duino.adc = cell2struct(cell(size(temp)),temp,1);
     settings.a2duino.adc.channelMapping = 'a2duino.adc.data';
     settings.a2duino.events.channelMapping = 'a2duino.adc.events';
+    settings.a2duino.use = true;
 else
     
     %  Execute the state dependent components
@@ -84,16 +85,18 @@ else
             
             %  The first frameUpdate will be reading the return buffer so
             %  load up the command queue here.
+            p.functionHandles.a2duinoObj.addCommand('getAdcVoltages');
             p.functionHandles.a2duinoObj.addCommand('getAdcBuffer');
             p.functionHandles.a2duinoObj.addCommand('getEventListener0');
-            %p.functionHandles.a2duinoObj.addCommand('getAdcVoltages');
+            p.functionHandles.a2duinoObj.addCommand('getPelletReleaseStatus');
+            
+            %  Send the command queue to a2duino
             p.functionHandles.a2duinoObj.sendCommands;
             
         case p.trial.pldaps.trialStates.trialCleanUpandSave
             
             %  Retrieve data buffer from last frame cycle
             p.functionHandles.a2duinoObj.retrieveOutput;
-            %  Trim out unused data array
             
         case p.trial.pldaps.trialStates.frameUpdate
             
@@ -105,10 +108,13 @@ else
             p = a2duino.getEventsData(p);
             
             %  Queue commands for the next frame cycle
+            p.functionHandles.a2duinoObj.addCommand('getAdcVoltages');
             p.functionHandles.a2duinoObj.addCommand('getAdcBuffer');
             p.functionHandles.a2duinoObj.addCommand('getEventListener0');
-            %p.functionHandles.a2duinoObj.addCommand('getAdcVoltages');
-            p.functionHandles.a2duinoObj.sendCommands;            
+            p.functionHandles.a2duinoObj.addCommand('getPelletReleaseStatus');
+            
+            %  Send them to a2duino
+            p.functionHandles.a2duinoObj.sendCommands;                        
     end
 end
 end
