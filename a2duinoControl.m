@@ -48,7 +48,7 @@ else
             fprintf('****************************************************************\n');
             fprintf('Create a2duino object and initialize connection to Arduino.\n');
             inputArgs = [fieldnames(p.trial.a2duino.adc) struct2cell(p.trial.a2duino.adc)]';
-            p.functionHandles.a2duinoObj = a2duino('verbose',inputArgs{:});
+            p.functionHandles.a2duinoObj = a2duino(inputArgs{:});
             fprintf('\n');
             p.functionHandles.a2duinoObj.setAdcSchedule;
             fprintf('ADC Schedule (read back from Arduino):\n');
