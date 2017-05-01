@@ -33,12 +33,11 @@ if(nargin==0)
     settings.(moduleName).requestedStates = requestedStates;
     
     %  Settings structure for a2duino
-    temp = properties(a2duino.adcSchedule);
-    settings.a2duino.adc = cell2struct(cell(size(temp)),temp,1);
+    settings.a2duino.adc = a2duino.getAdcScheduleStruct;
     settings.a2duino.adc.channelMapping = 'a2duino.adc.data';
     settings.a2duino.events.channelMapping = 'a2duino.adc.events';
-    settings.a2duino.use = true;
     settings.a2duino.useForReward = true;
+    settings.a2duino.rewardType = 'fluid';
 else
     
     %  Execute the state dependent components
@@ -50,29 +49,35 @@ else
             fprintf('Create a2duino object and initialize connection to Arduino.\n');
             inputArgs = [fieldnames(p.trial.a2duino.adc) struct2cell(p.trial.a2duino.adc)]';
             p.functionHandles.a2duinoObj = a2duino(inputArgs{:});
-            p.functionHandles.a2duinoObj.setAdcSchedule;
+            p.functionHandles.a2duinoObj.writeAdcSchedule;
+            fprintf('Connection settings:\n');
+            p.functionHandles.a2duinoObj.showConnectionSettings;
+            fprintf('\n');
+            fprintf('Device settings:\n');
+            p.functionHandles.a2duinoObj.showDeviceSettings;
+            fprintf('\n');
             fprintf('ADC Schedule:\n');
             p.functionHandles.a2duinoObj.showAdcSchedule;
-            fprintf('****************************************************************\n');
+            fprintf('\n');
             
-            %  Get the channel mappings
-            p = a2duino.setAdcChannelMappings(p);
+            %  Get the channel mappings and start the schedules
+            p = a2duino.setAdcChannelMapping(p);
+            p.functionHandles.a2duinoObj.startAdcSchedule;
+            fprintf('Started ADC schedule\n');
             p = a2duino.setEventsChannelMapping(p);
+            p.functionHandles.a2duinoObj.startEventListener;
+            fprintf('Started event listener\n');
+            fprintf('****************************************************************\n');
             
             %  Capture time for both devices
             p.trial.a2duino.startA2duinoTime = p.functionHandles.a2duinoObj.readTicksSinceStart;
             p.trial.a2duino.startPldapsTime = GetSecs;
             
-            %  Start the schedules
-            p.functionHandles.a2duinoObj.startAdcSchedule;
-            p.functionHandles.a2duinoObj.startEventListener0;
-            
-            
         case p.trial.pldaps.trialStates.experimentCleanUp
             
             %  stop the schedules
             p.functionHandles.a2duinoObj.stopAdcSchedule;
-            p.functionHandles.a2duinoObj.stopEventListener0;
+            p.functionHandles.a2duinoObj.stopEventListener;
             
             %  Capture time for both devices
             p.trial.a2duino.adc.stopA2duinoTime = p.functionHandles.a2duinoObj.readTicksSinceStart;
@@ -85,12 +90,18 @@ else
             
             %  The first frameUpdate will be reading the return buffer so
             %  load up the command queue here.
-            p.functionHandles.a2duinoObj.addCommand('readAdcVoltages');
             p.functionHandles.a2duinoObj.addCommand('readAdcBuffer');
-            p.functionHandles.a2duinoObj.addCommand('readEventListener0');
-            p.functionHandles.a2duinoObj.addCommand('readPelletReleaseStatus');
+            p.functionHandles.a2duinoObj.addCommand('readEventListener');
+            if(p.trial.a2duino.useForReward && p.functionHandles.a2duinoObj.rewardInProgress)
+                switch p.trial.a2duino.rewardType
+                    case 'pellet'
+                        p.functionHandles.a2duinoObj.addCommand('readPelletReleaseStatus');
+                    case 'fluid'
+                        p.functionHandles.a2duinoObj.addCommand('readFluidRewardStatus');
+                end
+            end
             
-            %  Send the command queue to a2duino
+            %  Send the command queue
             p.functionHandles.a2duinoObj.sendCommands;
             
         case p.trial.pldaps.trialStates.trialCleanUpandSave
@@ -108,13 +119,19 @@ else
             p = a2duino.getEventsData(p);
             
             %  Queue commands for the next frame cycle
-            p.functionHandles.a2duinoObj.addCommand('readAdcVoltages');
             p.functionHandles.a2duinoObj.addCommand('readAdcBuffer');
-            p.functionHandles.a2duinoObj.addCommand('readEventListener0');
-            p.functionHandles.a2duinoObj.addCommand('readPelletReleaseStatus');
+            p.functionHandles.a2duinoObj.addCommand('readEventListener');
+            if(p.trial.a2duino.useForReward && p.functionHandles.a2duinoObj.rewardInProgress)
+                switch p.trial.a2duino.rewardType
+                    case 'pellet'
+                        p.functionHandles.a2duinoObj.addCommand('readPelletReleaseStatus');
+                    case 'fluid'
+                        p.functionHandles.a2duinoObj.addCommand('readFluidRewardStatus');
+                end
+            end
             
-            %  Send them to a2duino
-            p.functionHandles.a2duinoObj.sendCommands;                        
+            %  Send the command queue
+            p.functionHandles.a2duinoObj.sendCommands;
     end
 end
 end
