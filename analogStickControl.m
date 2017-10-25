@@ -6,19 +6,16 @@ function settings = analogStickControl(p,state)
 %
 %  This is a PLDAPS module for the openreception branch.  This module
 %  controls various actions related to the analog stick that are done in
-%  all cases, such as initialization steps, connection checking, and
-%  capturing output from the joystick.
+%  all cases, in particular initialization and capturing output.
 %
 %  Returns the configuration settings for the module if called without an
 %  argument; you can use this as an argument to createRigPrefs.
 %
 %  NB:  this module calls functions from the analogStick class
 %
-%  NB:  for now, the window manager is taking normalized position
-%
-%  NB:  generally speaking we want to capture joystick data prior to any
-%  frame drawing or other updates, but after the default trial function has
-%  been called (order -Inf), so set order high so that it occurrs after
+%  NB:  generally speaking we want to capture analog stick data prior to
+%  any frame drawing or other updates, but after the default trial function
+%  has been called (order -Inf), so set order high so that it occurrs after
 %  default module but prior to the custom trial function events (at
 %  priority NaN).
 %
