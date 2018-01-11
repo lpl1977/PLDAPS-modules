@@ -46,7 +46,7 @@ else
         case p.trial.pldaps.trialStates.experimentPostOpenScreen
             fprintf('****************************************************************\n');
             fprintf('pldapsDefaultTrialFunction will be called by module\n');
-            fprintf('****************************************************************\n');
+            fprintf('****************************************************************\n');            
     end
     
     %  Execute pldapsDefaultTrialFunction for all states called
